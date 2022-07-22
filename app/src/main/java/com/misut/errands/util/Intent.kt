@@ -3,6 +3,7 @@ package com.misut.errands.util
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
+import com.misut.errands.R
 import java.nio.file.Path
 
 
@@ -11,5 +12,5 @@ fun Context.launchFileIntent(path: Path) {
         data = FileProvider.getUriForFile(this@launchFileIntent, packageName, path.toFile())
         flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
     }
-    startActivity(Intent.createChooser(intent, "Select Application"))
+    startActivity(Intent.createChooser(intent, resources.getString(R.string.select_application)))
 }
