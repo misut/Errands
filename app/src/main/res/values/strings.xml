@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Errands</string>
+    <string name="empty_folder">Empty Folder</string>
 </resources>
