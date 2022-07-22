@@ -10,14 +10,17 @@ import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.misut.errands.R
+import com.misut.errands.*
+import com.misut.errands.util.*
+import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
 
 
 const val EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 12345
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FileListFragment.OnEntryClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,7 +41,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        return
+        super.onBackPressed()
+
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            finish()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -54,6 +61,26 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Errands", "Permission granted")
             }
         }
+    }
+
+    override fun onClick(path: Path) {
+        if (path.isDirectory()) {
+            addFileListFragment(path)
+        } else {
+            launchFileIntent(path)
+        }
+    }
+
+    override fun onLongClick(path: Path) {
+        TODO("Not yet implemented")
+    }
+
+    private fun addFileListFragment(path: Path) {
+        val fileListFragment = FileListFragment.build(path)
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.container, fileListFragment)
+        fragmentTransaction.addToBackStack(path.toString())
+        fragmentTransaction.commit()
     }
 
     private fun checkPermission(): Boolean {
