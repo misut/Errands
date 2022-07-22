@@ -8,21 +8,26 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.misut.errands.R
-import com.misut.errands.infrastructure.LocalFileService
 import kotlinx.android.synthetic.main.fragment_file_list.*
 import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.listDirectoryEntries
 
 
 class FileListFragment : Fragment() {
     private lateinit var fileRecyclerAdapter: FileRecyclerAdapter
 
+    interface OnEntryClickListener {
+        fun onClick(path: Path)
+        fun onLongClick(path: Path)
+    }
+
     companion object Factory {
         private const val ARG_PATH: String = "FileListFragment.path"
 
-        fun build(path: Path) = FileListFragment().apply {
+        fun build(directoryPath: Path) = FileListFragment().apply {
             arguments = Bundle().apply {
-                putString(ARG_PATH, path.toString())
+                putString(ARG_PATH, directoryPath.toString())
             }
         }
     }
@@ -38,20 +43,23 @@ class FileListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fileRecyclerView.layoutManager = LinearLayoutManager(context)
-        fileRecyclerAdapter = FileRecyclerAdapter()
+        val onEntryClickListener = context as OnEntryClickListener
+        fileRecyclerAdapter = FileRecyclerAdapter(
+            onEntryClickListener = { onEntryClickListener.onClick(it) },
+            onEntryLongClickListener = { onEntryClickListener.onLongClick(it) },
+        )
+
         fileRecyclerView.adapter = fileRecyclerAdapter
+        fileRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        val path = arguments?.getString(ARG_PATH)?.let { Path(it) } ?: Path("/storage/emulated/0")
-        Log.d("Errands", "On path: $path")
+        val directoryPath = arguments?.getString(ARG_PATH)?.let { Path(it) } ?: Path("/storage/emulated/0")
+        Log.d("Errands", "On directory: $directoryPath")
 
-        val localFileService = LocalFileService()
-        val paths = localFileService.listPaths(path)
-        if (paths.isEmpty()) {
+        if (directoryPath.listDirectoryEntries().isEmpty()) {
             emptyFolderLayout.visibility = View.VISIBLE
         } else {
             emptyFolderLayout.visibility = View.INVISIBLE
         }
-        fileRecyclerAdapter.updateData(paths)
+        fileRecyclerAdapter.updateData(directoryPath)
     }
 }
