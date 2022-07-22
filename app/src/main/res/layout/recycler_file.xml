@@ -3,42 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="1dp"
     android:background="@color/white"
     android:foreground="?selectableItemBackground"
     android:padding="16dp"
-    tools:context=".FileRecyclerAdapter">
+    tools:context=".view.FileRecyclerAdapter">
 
     <TextView
-        android:id="@+id/nameTextView"
+        android:id="@+id/titleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="File" />
+        tools:text="Title"
+        android:textColor="@color/teal_700"/>
 
     <TextView
-        android:id="@+id/folderTextView"
+        android:id="@+id/subtitleTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="(Folder)"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="@id/nameTextView"
-        app:layout_constraintRight_toRightOf="@id/nameTextView"
-        app:layout_constraintTop_toBottomOf="@id/nameTextView" />
-
-    <TextView
-        android:id="@+id/totalSizeTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="4 MB"
         android:textSize="12sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/folderTextView" />
+        app:layout_constraintTop_toBottomOf="@id/titleTextView"
+        tools:text="Subtitle"
+        android:textColor="@color/teal_700"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
