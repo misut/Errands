@@ -1,4 +1,4 @@
-package com.misut.errands.view
+package com.misut.errands.ui
 
 import android.os.Bundle
 import android.util.Log
@@ -7,15 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.misut.errands.R
-import kotlinx.android.synthetic.main.fragment_file_list.*
+import com.misut.errands.databinding.FragmentExplorerBinding
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.listDirectoryEntries
 
 
-class FileListFragment : Fragment() {
-    private lateinit var fileRecyclerAdapter: FileRecyclerAdapter
+class ExplorerFragment : Fragment() {
+    private lateinit var binding: FragmentExplorerBinding
+    private lateinit var entryRecyclerAdapter: EntryRecyclerAdapter
 
     interface OnEntryClickListener {
         fun onClick(path: Path)
@@ -23,9 +23,9 @@ class FileListFragment : Fragment() {
     }
 
     companion object Factory {
-        private const val ARG_PATH: String = "FileListFragment.path"
+        private const val ARG_PATH: String = "EntriesFragment.path"
 
-        fun build(directoryPath: Path) = FileListFragment().apply {
+        fun build(directoryPath: Path) = ExplorerFragment().apply {
             arguments = Bundle().apply {
                 putString(ARG_PATH, directoryPath.toString())
             }
@@ -36,30 +36,31 @@ class FileListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_file_list, container, false)
+    ): View {
+        binding = FragmentExplorerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val onEntryClickListener = context as OnEntryClickListener
-        fileRecyclerAdapter = FileRecyclerAdapter(
+        entryRecyclerAdapter = EntryRecyclerAdapter(
             onEntryClickListener = { onEntryClickListener.onClick(it) },
             onEntryLongClickListener = { onEntryClickListener.onLongClick(it) },
         )
 
-        fileRecyclerView.adapter = fileRecyclerAdapter
-        fileRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.entryRecyclerView.adapter = entryRecyclerAdapter
+        binding.entryRecyclerView.layoutManager = LinearLayoutManager(context)
 
         val directoryPath = arguments?.getString(ARG_PATH)?.let { Path(it) } ?: Path("/storage/emulated/0")
         Log.d("Errands", "On directory: $directoryPath")
 
         if (directoryPath.listDirectoryEntries().isEmpty()) {
-            emptyFolderLayout.visibility = View.VISIBLE
+            binding.emptyFolderLayout.visibility = View.VISIBLE
         } else {
-            emptyFolderLayout.visibility = View.INVISIBLE
+            binding.emptyFolderLayout.visibility = View.INVISIBLE
         }
-        fileRecyclerAdapter.updateData(directoryPath)
+        entryRecyclerAdapter.updateData(directoryPath)
     }
 }

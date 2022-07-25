@@ -9,7 +9,7 @@
     android:background="@color/base_background"
     android:foreground="?selectableItemBackground"
     android:padding="16dp"
-    tools:context=".view.FileRecyclerAdapter">
+    tools:context=".ui.EntryRecyclerAdapter">
 
     <TextView
         android:id="@+id/titleTextView"

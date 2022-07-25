@@ -10,13 +10,14 @@
 
     <ImageView
         android:id="@+id/arrowTextView"
+        android:contentDescription=">"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:src="@drawable/ic_folder_dark_24dp"
+        android:src="@drawable/ic_folder_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/base_text"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="HardcodedText,MissingConstraints" />
 
     <TextView
         android:id="@+id/nameTextView"

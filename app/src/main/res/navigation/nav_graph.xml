@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navGraph"
+    app:startDestination="@id/explorerFragment">
+
+    <fragment
+        android:id="@+id/explorerFragment"
+        android:name="com.misut.errands.ui.ExplorerFragment"
+        android:label="fragment_explorer"
+        tools:layout="@layout/fragment_explorer" />
+    <fragment
+        android:id="@+id/errandsFragment"
+        android:name="com.misut.errands.ui.ErrandsFragment"
+        android:label="fragment_errands"
+        tools:layout="@layout/fragment_errands" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.misut.errands.ui.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
