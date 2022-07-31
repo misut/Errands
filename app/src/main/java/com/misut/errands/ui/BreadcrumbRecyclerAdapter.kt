@@ -8,16 +8,17 @@ import com.misut.errands.databinding.RecyclerBreadcrumbBinding
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 
 
 class BreadcrumbRecyclerAdapter(
     private val onItemClickListener: ((Path) -> Unit)
 ) : RecyclerView.Adapter<BreadcrumbRecyclerAdapter.ViewHolder>() {
     private var directoryPath: Path = Path("/storage/emulated/0")
-    private val filePaths: List<Path>
-        get() = directoryPath.listDirectoryEntries()
+    private val directoryPaths: List<Path>
+        get() = directoryPath.toList()
 
-    override fun getItemCount(): Int = filePaths.size
+    override fun getItemCount(): Int = directoryPaths.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(position)
 
@@ -31,16 +32,15 @@ class BreadcrumbRecyclerAdapter(
             itemView.setOnClickListener(this)
         }
 
-        private val filePath: Path
-            get() = filePaths[adapterPosition]
+        private val directoryName: String
+            get() = directoryPaths[adapterPosition].toString()
 
         override fun onClick(v: View?) {
-            onItemClickListener.invoke(filePath)
+            onItemClickListener.invoke(directoryPaths[adapterPosition])
         }
 
         fun bind(position: Int) {
-            val path: Path = filePaths[position]
-            binding.nameTextView.text = path.fileName.toString()
+            binding.nameTextView.text = directoryName
         }
     }
 }

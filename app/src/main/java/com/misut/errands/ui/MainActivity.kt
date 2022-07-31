@@ -8,25 +8,24 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationBarView
 import com.misut.errands.*
 import com.misut.errands.databinding.ActivityMainBinding
 import com.misut.errands.util.*
 import java.nio.file.Path
-import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 
 
 class MainActivity : AppCompatActivity(), ExplorerFragment.OnEntryClickListener {
     private lateinit var binding: ActivityMainBinding
+    private val navController by lazy {
+        (supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment).navController
+    }
 
     companion object {
         const val EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 12345
@@ -36,38 +35,20 @@ class MainActivity : AppCompatActivity(), ExplorerFragment.OnEntryClickListener 
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-        Log.d("Errands", "App launched")
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
-        val navController = navHostFragment.navController
         binding.navView.setupWithNavController(navController)
+        setContentView(binding.root)
+        Log.d("Errands", "App launched")
 
         if (!checkPermission()) {
             requestPermission()
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_toolbar, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menuSearch -> {
-                Toast.makeText(applicationContext, "Search pressed", Toast.LENGTH_SHORT).show()
-            }
-        }
-        return super.onOptionsItemSelected(item)
+        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount == 0) {
-            finish()
-        }
-
         super.onBackPressed()
     }
 
@@ -99,11 +80,8 @@ class MainActivity : AppCompatActivity(), ExplorerFragment.OnEntryClickListener 
     }
 
     private fun addEntriesFragment(path: Path) {
-        val explorerFragment = ExplorerFragment.build(path)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.navHostFragment, explorerFragment)
-            .addToBackStack(path.toString())
-            .commit()
+        val action = ExplorerFragmentDirections.actionExplore(currentPath = path.toString())
+        navController.navigate(action)
     }
 
     private fun checkPermission(): Boolean {
